@@ -1,0 +1,23 @@
+/* src/custom-colors.css */
+:root {
+  --bs-primary: #0980B5;
+  --bs-secondary: #17B8E0;
+}
+
+/* Override Bootstrap's primary and secondary colors */
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #076a99; /* A slightly darker shade for hover */
+  --bs-btn-hover-border-color: #076a99;
+  --bs-btn-active-bg: #076a99;
+  --bs-btn-active-border-color: #076a99;
+}
+
+.text-primary {
+  color: var(--bs-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--bs-secondary) !important;
+}

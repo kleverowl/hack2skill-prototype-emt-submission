@@ -1,0 +1,23 @@
+INFO:flight_agent.agent_executor:Initializing flightADKAgentExecutor for agent: flight_agent
+INFO:flight_agent.agent_executor:ADK Runner accepted for app 'FLIGHT_a2a_app' for agent 'flight_agent'
+INFO:__main__:Starting Flight Concierge Agent server on http://0.0.0.0:8002
+INFO:__main__:Agent Name: Flight Concierge Agent, Version: 1.0.0
+INFO:__main__:  Skill: Search for Flights (ID: flight_search, Tags: ['flights', 'search', 'booking', 'travel', 'itinerary'])
+INFO:__main__:  Skill: Check Flight Status (ID: flight_status_check, Tags: ['flights', 'status', 'tracking', 'real-time', 'travel'])
+INFO:     Started server process [2993281]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:flight_agent.agent_executor:flight_agent processing search query: 'Find the cheapest economy flights from Kolhapur to Goa on 23 sept'
+INFO:flight_agent.agent_executor:Created new ADK session: 5d0a0776-3a83-4dbf-a60e-bfdeb1b75205 for flight_agent
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_genai.models:AFC is enabled with max remote calls: 10.
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:flight_agent.agent_executor:flight_agent final response: 'MISSING_INFO: The year and number of travelers are required to search for flights.'
+INFO:flight_agent.agent_executor:Sending flight search response for task 5d0a0776-3a83-4dbf-a60e-bfdeb1b75205
+ERROR:asyncio:Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f57bf903230>
+ERROR:asyncio:Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7f57c1e27110>, 8763194.568716945)])']
+connector: <aiohttp.connector.TCPConnector object at 0x7f57bf902e40>

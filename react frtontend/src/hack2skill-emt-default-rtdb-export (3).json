@@ -1,0 +1,347 @@
+{
+  "users": {
+    "user_id": {
+      "DiULtaUAfOUv4kpMctkWB1f9sWf1": {
+        "itineraries": {
+          "itinerary_id_1": {
+            "messages": {
+              "message_id": {
+                "-O__nlbGb0ySqP2SGSF9": {
+                  "message": "hii",
+                  "message_type": "text",
+                  "sender": "user",
+                  "timestamp": "2025-09-20T06:27:32.206236+00:00"
+                },
+                "-O__nmo0j4WaKaVjI7Cq": {
+                  "message": "Hello! I am your Itinerary Agent. I can help you plan your trip. Let's start by gathering some information. Here is the current state of your itinerary: {'user_details': {'name': '', 'email': '', 'phone_number': '', 'passport_nationality': '', 'home_address': ''}, 'persons_details': [], 'preferences': {'travel_theme': [], 'cuisine_preferences': [], 'dietary_restrictions': [], 'interests': [], 'hotel_type': '', 'flight_seat_type': ''}, 'itinerary': {'trip_name': '', 'origin': '', 'destination': '', 'start_date': '', 'end_date': '', 'days': []}, 'budget': {'total_budget': None, 'currency': '', 'expense_breakdown': {'flights': None, 'hotels': None, 'food': None, 'activities': None, 'transport': None, 'miscellaneous': None}}, 'currency_exchange': {'from_currency': '', 'to_currency': '', 'exchange_rate': None, 'last_updated': ''}}\n\nWhat is your name?\n",
+                  "message_type": "text",
+                  "sender": "model",
+                  "timestamp": "2025-09-20T06:28:20.333117+00:00"
+                },
+                "RiULkkrkUAfOUpMctkWB1f9sWf1": {
+                  "activityType": "hotel",
+                  "activity_object": "uuid_hotel_paris",
+                  "bookingRef": "/hotels/uuid_hotel_paris",
+                  "message": "message text",
+                  "message_type": "text",
+                  "sender": "model",
+                  "timestamp": "2025-09-15T14:30:00Z"
+                }
+              },
+              "typing": false
+            },
+            "state": {
+              "budget": {
+                "currency": "USD",
+                "total_budget": 7000
+              },
+              "currency_exchange": {
+                "from_currency": "",
+                "last_updated": "",
+                "to_currency": ""
+              },
+              "itinerary": {
+                "days": [
+                  {
+                    "date": "October 10, 2025",
+                    "day_number": 1,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Flight to Tokyo - JL004",
+                        "end_time": "3:30 PM JST (+1 day)",
+                        "start_time": "12:30 PM EST"
+                      }
+                    ]
+                  },
+                  {
+                    "date": "October 11, 2025",
+                    "day_number": 2,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Cab - Airport to Hotel",
+                        "end_time": "5:30 PM JST",
+                        "start_time": "4:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Hotel Check-in - Tokyo Prince Hotel",
+                        "end_time": "6:30 PM JST",
+                        "start_time": "5:30 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Family dinner at kid-friendly ramen restaurant",
+                        "end_time": "8:30 PM JST",
+                        "start_time": "7:00 PM JST"
+                      }
+                    ]
+                  },
+                  {
+                    "date": "October 12, 2025",
+                    "day_number": 3,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Breakfast at hotel",
+                        "end_time": "9:00 AM JST",
+                        "start_time": "8:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Visit Senso-ji Temple (Traditional Cultural Experience)",
+                        "end_time": "12:00 PM JST",
+                        "start_time": "10:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Vegetarian-friendly lunch in Asakusa",
+                        "end_time": "1:30 PM JST",
+                        "start_time": "12:30 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Explore Tokyo Skytree (Modern Cityscape)",
+                        "end_time": "5:00 PM JST",
+                        "start_time": "2:30 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Sushi dinner at family-friendly restaurant",
+                        "end_time": "8:00 PM JST",
+                        "start_time": "6:30 PM JST"
+                      }
+                    ]
+                  },
+                  {
+                    "date": "October 13, 2025",
+                    "day_number": 4,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Breakfast at hotel",
+                        "end_time": "9:30 AM JST",
+                        "start_time": "8:30 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Visit Akihabara Electric Town (Anime & Electronics)",
+                        "end_time": "12:30 PM JST",
+                        "start_time": "10:30 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Lunch at anime-themed cafe",
+                        "end_time": "2:00 PM JST",
+                        "start_time": "1:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Tokyo DisneySea (Family Fun)",
+                        "end_time": "9:00 PM JST",
+                        "start_time": "3:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Dinner at DisneySea",
+                        "end_time": "8:00 PM JST",
+                        "start_time": "7:00 PM JST"
+                      }
+                    ]
+                  },
+                  {
+                    "date": "October 14, 2025",
+                    "day_number": 5,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Breakfast at hotel",
+                        "end_time": "10:00 AM JST",
+                        "start_time": "9:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Visit Meiji Shrine (Cultural & Spiritual Experience)",
+                        "end_time": "12:30 PM JST",
+                        "start_time": "11:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Explore Harajuku (Youth Culture & Anime)",
+                        "end_time": "3:00 PM JST",
+                        "start_time": "1:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Vegetarian lunch in Harajuku",
+                        "end_time": "4:15 PM JST",
+                        "start_time": "3:15 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Shopping in Shibuya (Modern Cityscape)",
+                        "end_time": "7:00 PM JST",
+                        "start_time": "5:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Family-friendly Japanese dinner",
+                        "end_time": "9:00 PM JST",
+                        "start_time": "7:30 PM JST"
+                      }
+                    ]
+                  },
+                  {
+                    "date": "October 15, 2025",
+                    "day_number": 6,
+                    "schedule": [
+                      {
+                        "activity_type": "activity",
+                        "description": "Breakfast at hotel",
+                        "end_time": "9:00 AM JST",
+                        "start_time": "8:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Last-minute souvenir shopping",
+                        "end_time": "11:30 AM JST",
+                        "start_time": "10:00 AM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Hotel check-out",
+                        "end_time": "12:30 PM JST",
+                        "start_time": "12:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Cab - Hotel to Airport",
+                        "end_time": "2:30 PM JST",
+                        "start_time": "1:00 PM JST"
+                      },
+                      {
+                        "activity_type": "activity",
+                        "description": "Flight back to New York - JL003",
+                        "end_time": "10:30 AM EST (same day)",
+                        "start_time": "4:30 PM JST"
+                      }
+                    ]
+                  }
+                ],
+                "destination": "Tokyo (NRT)",
+                "end_date": "October 15, 2025",
+                "origin": "New York (JFK)",
+                "start_date": "October 10, 2025",
+                "trip_name": "Tokyo Family Adventure"
+              },
+              "persons_details": [
+                {
+                  "gender": "",
+                  "name": "John Doe",
+                  "relation_to_user": "self"
+                },
+                {
+                  "gender": "",
+                  "name": "Jane Doe",
+                  "relation_to_user": "wife"
+                },
+                {
+                  "age": 10,
+                  "gender": "",
+                  "name": "Jimmy Doe",
+                  "relation_to_user": "child"
+                }
+              ],
+              "preferences": {
+                "cuisine_preferences": [
+                  "Japanese",
+                  "Ramen",
+                  "Sushi",
+                  "Kid-friendly"
+                ],
+                "dietary_restrictions": [
+                  "Vegetarian"
+                ],
+                "flight_seat_type": "Economy Plus",
+                "hotel_type": "4-star, family-friendly",
+                "interests": [
+                  "Temples",
+                  "Modern Cityscapes",
+                  "Anime"
+                ],
+                "travel_theme": [
+                  "Cultural",
+                  "Family Fun"
+                ]
+              },
+              "user_details": {
+                "email": "",
+                "home_address": "New York, USA",
+                "name": "John Doe",
+                "passport_nationality": "",
+                "phone_number": ""
+              }
+            },
+            "status": "draft"
+          }
+        },
+        "preferences": {
+          "food": [
+            "Italian",
+            "Spicy"
+          ]
+        }
+      },
+      "bQ0ZyKY8DnYkSLWq942H7Widcd83": {
+        "createdAt": "2025-09-19T12:49:56.918Z",
+        "itineraries": {
+          "itinerary_id_1": {
+            "state": {
+              "budget": {
+                "currency": "",
+                "total_budget": 0
+              },
+              "currency_exchange": {
+                "from_currency": "",
+                "last_updated": "",
+                "to_currency": ""
+              },
+              "itinerary": {
+                "destination": "",
+                "end_date": "",
+                "origin": "",
+                "start_date": "",
+                "trip_name": ""
+              },
+              "persons_details": [
+                {
+                  "age": 0,
+                  "gender": "",
+                  "name": "",
+                  "relation_to_user": ""
+                }
+              ],
+              "preferences": {
+                "flight_seat_type": "",
+                "hotel_type": ""
+              },
+              "user_details": {
+                "email": "",
+                "home_address": "",
+                "name": "",
+                "passport_nationality": "",
+                "phone_number": ""
+              }
+            },
+            "status": "draft"
+          }
+        },
+        "profile": {
+          "displayName": "Pushkar Kumbhar",
+          "email": "pushkarr09@gmail.com"
+        }
+      }
+    }
+  }
+}

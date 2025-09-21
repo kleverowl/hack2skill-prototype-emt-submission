@@ -1,0 +1,24 @@
+INFO:food_agent.agent_executor:Initializing foodADKAgentExecutor for agent: food_agent
+INFO:food_agent.agent_executor:ADK Runner accepted for app 'FOOD_a2a_app' for agent 'food_agent'
+INFO:__main__:Starting Food Concierge Agent server on http://0.0.0.0:8003
+INFO:__main__:Agent Name: Food Concierge Agent, Version: 1.0.0
+INFO:__main__:  Skill: Search for Restaurants (ID: food_search, Tags: ['restaurants', 'reservations', 'dining', 'dining plan'])
+INFO:__main__:  Skill: Check Restaurant Availability (ID: restaurant_availability_check, Tags: ['restaurants', 'availability', 'reservations', 'real-time', 'dining'])
+INFO:     Started server process [2993283]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8003 (Press CTRL+C to quit)
+WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:food_agent.agent_executor:food_agent processing search query: 'Suggest some good South Indian restaurants in Goa'
+INFO:food_agent.agent_executor:Created new ADK session: f6e03a5c-2002-42f8-b100-0fa4af160de0 for food_agent
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_genai.models:AFC is enabled with max remote calls: 10.
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:food_agent.agent_executor:food_agent final response: 'MISSING_INFO: The number of people is required to search for restaurants.
+'
+INFO:food_agent.agent_executor:Sending food search response for task f6e03a5c-2002-42f8-b100-0fa4af160de0
+ERROR:asyncio:Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fe61619b230>
+ERROR:asyncio:Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7fe616177530>, 8763203.954481341)])']
+connector: <aiohttp.connector.TCPConnector object at 0x7fe61619ae40>

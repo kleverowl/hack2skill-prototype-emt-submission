@@ -1,0 +1,30 @@
+INFO:activity_agent.agent_executor:Initializing ActivityADKAgentExecutor for agent: activity_agent
+INFO:activity_agent.agent_executor:ADK Runner accepted for app 'ACTIVITY_a2a_app' for agent 'activity_agent'
+INFO:__main__:Starting Activity Concierge Agent server on http://0.0.0.0:8005
+INFO:__main__:Agent Name: Activity Concierge Agent, Version: 1.0.0
+INFO:__main__:  Skill: Search for Activities (ID: activity_search, Tags: ['activities', 'sightseeing', 'tours', 'travel', 'itinerary'])
+INFO:     Started server process [2993284]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8005 (Press CTRL+C to quit)
+WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:activity_agent.agent_executor:activity_agent processing search query: 'Suggest some relaxed activities in Goa'
+INFO:activity_agent.agent_executor:Created new ADK session: e92b4870-a26f-4fe9-bba2-d62493b2d324 for activity_agent
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_genai.models:AFC is enabled with max remote calls: 10.
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:activity_agent.agent_executor:activity_agent final response: 'Option 1:
+Activity: Sunset Cruise on Mandovi River
+Price: ₹1,500 per person
+Details: Includes light snacks and drinks, live music.
+Duration: 2 hours
+
+Option 2:
+Activity: Ayurvedic Massage
+Price: ₹2,00...'
+INFO:activity_agent.agent_executor:Sending activity search response for task e92b4870-a26f-4fe9-bba2-d62493b2d324
+ERROR:asyncio:Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7fd933513230>
+ERROR:asyncio:Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7fd933525610>, 8763199.852121007)])']
+connector: <aiohttp.connector.TCPConnector object at 0x7fd933512e40>

@@ -1,0 +1,142 @@
+[data-bs-theme="light"] {
+  --tufts-blue: #0980B5;
+  --dim-gray: #676767;
+  --white: #ffffff;
+  --savoy-blue: #17B8E0;
+  --black: #000000;
+
+  --bs-primary: var(--tufts-blue);
+  --bs-primary-rgb: 32, 147, 239;
+  --bs-secondary: var(--savoy-blue);
+  --bs-secondary-rgb: 66, 99, 193;
+  --bs-body-color: var(--dim-gray);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* =================================================================
+   Color Theme Overrides
+================================================================= */
+
+[data-bs-theme="light"] .btn-primary,
+[data-bs-theme="light"] .btn-primary:hover,
+[data-bs-theme="light"] .btn-primary:active,
+[data-bs-theme="light"] .btn-primary:focus {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: var(--white) !important;
+}
+
+[data-bs-theme="light"] .side-menu-nav .nav-link.active,
+[data-bs-theme="light"] .side-menu-nav .nav-link.active:hover {
+    background-color: #17B8E0;
+    color: var(--white);
+}
+
+[data-bs-theme="light"] .chat-conversation .conversation-list.right .ctext-wrap-content {
+    background-color: var(--bs-primary);
+    color: var(--white);
+}
+
+[data-bs-theme="light"] .chat-conversation .conversation-list.right .ctext-wrap-content .chat-time {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+[data-bs-theme="light"] .text-primary {
+    color: var(--bs-primary) !important;
+}
+
+[data-bs-theme="light"] a {
+    color: var(--bs-primary);
+}
+
+[data-bs-theme="light"] a:hover {
+    color: var(--bs-secondary);
+}
+
+/* =================================================================
+   Dark Theme Overrides
+================================================================= */
+
+body[data-bs-theme="dark"] {
+  --bs-body-color: #dee2e6;
+  --bs-body-bg: #212529;
+  --bs-tertiary-bg: #2b3035;
+  --bs-border-color: rgba(255, 255, 255, 0.1);
+  --bs-card-bg: var(--bs-tertiary-bg);
+  --bs-list-group-bg: var(--bs-tertiary-bg);
+  --bs-primary: #0980B5;
+  --bs-secondary: #17B8E0;
+}
+
+body[data-bs-theme="dark"] .btn-primary,
+body[data-bs-theme="dark"] .btn-primary:hover,
+body[data-bs-theme="dark"] .btn-primary:active,
+body[data-bs-theme="dark"] .btn-primary:focus {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: var(--white) !important;
+}
+
+body[data-bs-theme="dark"] .side-menu-nav .nav-link.active,
+body[data-bs-theme="dark"] .side-menu-nav .nav-link.active:hover {
+    background-color: #17B8E0;
+    color: var(--white);
+}
+
+body[data-bs-theme="dark"] .chat-conversation .conversation-list.right .ctext-wrap-content {
+    background-color: var(--bs-primary);
+    color: var(--white);
+}
+
+body[data-bs-theme="dark"] .chat-conversation .conversation-list.right .ctext-wrap-content .chat-time {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+body[data-bs-theme="dark"] .text-primary {
+    color: var(--bs-primary) !important;
+}
+
+body[data-bs-theme="dark"] a {
+    color: var(--bs-primary);
+}
+
+body[data-bs-theme="dark"] a:hover {
+    color: var(--bs-secondary);
+}
+
+/* Specific component background/text colors for dark theme */
+body[data-bs-theme="dark"] .card,
+body[data-bs-theme="dark"] .modal-content,
+body[data-bs-theme="dark"] .dropdown-menu {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+body[data-bs-theme="dark"] .form-control,
+body[data-bs-theme="dark"] .bg-light-subtle {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+}
+
+body[data-bs-theme="dark"] .text-muted {
+    color: #a6b0cf !important;
+}
+
+body[data-bs-theme="dark"] .border-light {
+    border-color: var(--bs-border-color) !important;
+}
