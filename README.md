@@ -99,11 +99,6 @@ User Request → Router Agent → Main Agent
 │       ├── firestoredata.py   # Firebase data access (some agents)
 │       └── __main__.py        # Entry point for standalone execution
 │
-├── ui/                        # User interface components
-│   ├── app.py
-│   ├── a2a_app.py             # Agent-to-Agent interface
-│   └── agent_executor.py
-│
 ├── scripts/                   # Utility scripts
 │   ├── start_agents.py        # Agent orchestration script
 │   └── clear_redis_sessions.py
