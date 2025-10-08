@@ -1,126 +1,167 @@
-"""Activity Concierge Agent A2A Service Entry Point."""
-
+import json
 import logging
+import asyncio
 import os
-
-import click
-import uvicorn
-
-# A2A server imports
-from a2a.server.apps import A2AStarletteApplication
-from a2a.server.request_handlers import DefaultRequestHandler
-from a2a.server.tasks import InMemoryTaskStore
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from dotenv import load_dotenv
-
-# ADK imports
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+import sys
+from message_broker import MessageBroker
+from message_protocol import Message, Header, ResultPayload
+from activity_agent.agent import agent
 from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
+from redis_session_service import RedisSessionService
+from firebase_state_service import FirebaseStateService
+from main_agent.memory import set_firebase_context
+from google.genai import types
 
-# Local agent imports (updated for activity_agent)
-from activity_agent.agent import create_activity_agent
-from activity_agent.agent_executor import ActivityADKAgentExecutor
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Basic logging configuration
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s:%(name)s:%(message)s',
+    stream=sys.stderr,
+    force=True
+)
 logger = logging.getLogger(__name__)
 
-# Define the application name as requested
-ACTIVITY_A2A_APP_NAME = "ACTIVITY_a2a_app"
+class ActivityAgentExecutor:
+    def __init__(self):
+        self.broker = MessageBroker()
+        self.agent_name = "activity_agent"
+        self.llm_agent = agent
 
+        # Redis session service for conversation history
+        self.session_service = RedisSessionService()
 
-@click.command()
-@click.option(
-    "--host",
-    "host",
-    default=os.getenv("A2A_ACTIVITY_HOST", "localhost"),
-    show_default=True,
-    help="Host for the Activity Concierge Agent server.",
-)
-@click.option(
-    "--port",
-    "port",
-    default=int(os.getenv("A2A_ACTIVITY_PORT", 8005)),
-    show_default=True,
-    type=int,
-    help="Port for the Activity Concierge Agent server.",
-)
-def main(host: str, port: int) -> None:
-    """Runs the Activity ADK Agent as an A2A service."""
+        # Firebase service for state management
+        cred_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'hack2skill-emt-firebase-adminsdk-fbsvc-b2ea50c49d.json'))
+        self.firebase_service = FirebaseStateService(cred_path=cred_path)
 
-    # Define AgentSkills for the Activity Concierge Agent
-    activity_search_skill = AgentSkill(
-        id="activity_search",
-        name="Search for Activities",
-        description="Finds activities and attractions based on location and interests.",
-        tags=["activities", "sightseeing", "tours", "travel", "itinerary"],
-        examples=[
-            "Find adventure activities in Rishikesh",
-            "What are some museums to visit in Paris?",
-            "Suggest some things to do in Goa",
-        ],
-    )
+        # Use consistent app_name
+        self.app_name = "chat_app"
 
-    # Define the main AgentCard for the Activity Concierge
-    agent_card = AgentCard(
-        name="Activity Concierge Agent",
-        description="An agent to find and suggest activities and attractions for travelers.",
-        url=f"http://{host}:{port}/",
-        version="1.0.0",
-        defaultInputModes=["text"],
-        defaultOutputModes=["text"],
-        capabilities=AgentCapabilities(streaming=False, pushNotifications=False),
-        skills=[activity_search_skill],
-    )
-
-    try:
-        # Create the actual ADK Agent for activities
-        adk_agent = create_activity_agent()
-
-        # Initialize the ADK Runner
-        runner = Runner(
-            app_name=ACTIVITY_A2A_APP_NAME,
-            agent=adk_agent,
-            artifact_service=InMemoryArtifactService(),
-            session_service=InMemorySessionService(),
-            memory_service=InMemoryMemoryService(),
+        self.runner = Runner(
+            agent=self.llm_agent,
+            app_name=self.app_name,
+            session_service=self.session_service
         )
+        logger.info(f"[{self.agent_name}] Initialized with Firebase state service")
 
-        # Instantiate the AgentExecutor with the runner
-        agent_executor = ActivityADKAgentExecutor(
-            agent=adk_agent, agent_card=agent_card, runner=runner
-        )
+    async def _invoke_llm_sync(self, user_request: str, session_id: str, user_id: str, itinerary_id: str) -> str:
+        """Invokes the agent's LLM synchronously using the Runner."""
+        logger.info(f"[{self.agent_name}] Invoking runner for user: {user_id}, session: {session_id}, itinerary: {itinerary_id}")
 
-    except Exception as e:
-        logger.error(
-            f"Failed to initialize Activity Agent components: {e}", exc_info=True
-        )
-        return
+        # Set Firebase context before invoking runner
+        set_firebase_context(self.firebase_service, user_id, itinerary_id)
+        logger.info(f"[{self.agent_name}] Firebase context set")
 
-    # Set up the A2A request handler
-    request_handler = DefaultRequestHandler(
-        agent_executor=agent_executor, task_store=InMemoryTaskStore()
-    )
+        content = types.Content(role='user', parts=[types.Part(text=user_request)])
+        final_response_text = ""
 
-    # Create the A2A Starlette application
-    a2a_app = A2AStarletteApplication(
-        agent_card=agent_card, http_handler=request_handler
-    )
+        async for event in self.runner.run_async(user_id=user_id, session_id=session_id, new_message=content):
+            if event.content and event.content.parts:
+                for part in event.content.parts:
+                    if hasattr(part, 'text') and part.text:
+                        final_response_text += part.text
 
-    logger.info(f"Starting Activity Concierge Agent server on http://{host}:{port}")
-    logger.info(f"Agent Name: {agent_card.name}, Version: {agent_card.version}")
-    if agent_card.skills:
-        for skill in agent_card.skills:
-            logger.info(f"  Skill: {skill.name} (ID: {skill.id}, Tags: {skill.tags})")
+        logger.info(f"[{self.agent_name}] Final response length: {len(final_response_text)}")
+        return final_response_text
 
-    # Run the Uvicorn server
-    uvicorn.run(a2a_app.build(), host=host, port=port)
+    def run(self):
+        main_queue = f"tasks:{self.agent_name}"
+        processing_queue = f"processing:{self.agent_name}"
+        dlq = f"dlq:{self.agent_name}"
+        max_retries = 3
 
+        logger.info(f"[{self.agent_name}] is waiting for tasks on {main_queue}...")
+        while True:
+            task_message_dict = self.broker.start_atomic_task(main_queue, processing_queue)
+            if not task_message_dict:
+                continue
+
+            try:
+                task_message = Message.model_validate(task_message_dict)
+                correlation_id = task_message.header.correlation_id
+                logger.info(f"[{self.agent_name}] Received task: {task_message.payload.task_name} with Correlation ID: {correlation_id}")
+
+                # Extract parameters including user_id and itinerary_id
+                params = task_message.payload.parameters
+                task_description = params.get("task_description", "")
+                user_id = params.get("user_id", "user")
+                itinerary_id = params.get("itinerary_id", "default")
+                session_id = params.get("session_id", correlation_id)
+
+                logger.info(f"[{self.agent_name}] Processing for user={user_id}, itinerary={itinerary_id}")
+                logger.info(f"[{self.agent_name}] Task description: {task_description}")
+
+                # Invoke the LLM with Firebase context
+                llm_response_str = asyncio.run(
+                    self._invoke_llm_sync(task_description, session_id, user_id, itinerary_id)
+                )
+                logger.info(f"[{self.agent_name}] Raw LLM response: {llm_response_str[:200]}")
+
+                # Try to parse JSON response, fallback to plain text
+                try:
+                    # Strip markdown code fences if present
+                    cleaned_response = llm_response_str.strip()
+                    if cleaned_response.startswith('```json'):
+                        cleaned_response = cleaned_response[7:]  # Remove ```json
+                    elif cleaned_response.startswith('```'):
+                        cleaned_response = cleaned_response[3:]  # Remove ```
+                    if cleaned_response.endswith('```'):
+                        cleaned_response = cleaned_response[:-3]  # Remove trailing ```
+                    cleaned_response = cleaned_response.strip()
+
+                    llm_response_json = json.loads(cleaned_response)
+                    # Keep the full structure with results array
+                    if 'results' in llm_response_json:
+                        result_data = llm_response_json
+                        # Also format a friendly response for the user
+                        results = llm_response_json.get('results', [])
+                        if results and len(results) > 0:
+                            activity = results[0]
+                            friendly_response = f"🎯 **{activity.get('name', 'Activity')}**\n\n"
+                            friendly_response += f"📍 Location: {activity.get('location', 'N/A')}\n"
+                            friendly_response += f"💰 Price: {activity.get('currency', '$')}{activity.get('price', 'N/A')}\n"
+                            friendly_response += f"⏱️ Duration: {activity.get('duration', 'N/A')}\n"
+                            if activity.get('description'):
+                                friendly_response += f"📝 Description: {activity.get('description')}\n"
+                            if activity.get('justification'):
+                                friendly_response += f"\n💡 Note: {activity.get('justification')}"
+                            result_data['response'] = friendly_response
+                        else:
+                            result_data['response'] = llm_response_str
+                    else:
+                        result_data = {"response": llm_response_str, "results": []}
+                except json.JSONDecodeError:
+                    logger.warning(f"[{self.agent_name}] Response not JSON, using as plain text")
+                    result_data = {"response": llm_response_str, "results": []}
+
+                result_header = Header(
+                    correlation_id=correlation_id,
+                    message_type="RESULT",
+                    source_agent=self.agent_name,
+                    target_agent=task_message.header.source_agent,
+                )
+                result_payload = ResultPayload(
+                    status="SUCCESS",
+                    data=result_data
+                )
+                result_message = Message(header=result_header, payload=result_payload)
+
+                reply_channel = task_message.header.reply_to_channel or "results:main"
+                self.broker.enqueue_task(reply_channel, result_message.model_dump())
+                logger.info(f"[{self.agent_name}] Sent result to {reply_channel}")
+
+                self.broker.finish_atomic_task(processing_queue, task_message_dict)
+
+            except Exception as e:
+                logger.error(f"[{self.agent_name}] Task failed: {e}", exc_info=True)
+                task_message_dict['retry_count'] = task_message_dict.get('retry_count', 0) + 1
+                if task_message_dict['retry_count'] >= max_retries:
+                    self.broker.move_to_dlq(processing_queue, dlq, task_message_dict)
+                    logger.error(f"[{self.agent_name}] Task moved to DLQ after {max_retries} retries")
+                else:
+                    self.broker.requeue_failed_task(processing_queue, main_queue, task_message_dict)
+                    logger.warning(f"[{self.agent_name}] Task requeued, retry {task_message_dict['retry_count']}/{max_retries}")
 
 if __name__ == "__main__":
-    main()
+    agent_executor = ActivityAgentExecutor()
+    agent_executor.run()

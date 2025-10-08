@@ -1,22 +1,5 @@
-INFO:hotel_agent.agent_executor:Initializing HotelADKAgentExecutor for agent: hotel_agent
-INFO:hotel_agent.agent_executor:ADK Runner accepted for app 'HOTEL_a2a_app' for agent 'hotel_agent'
-INFO:__main__:Starting Hotel Concierge Agent server on http://0.0.0.0:8010
-INFO:__main__:Agent Name: Hotel Concierge Agent, Version: 1.0.0
-INFO:__main__:  Skill: Search for Hotels (ID: hotel_search, Tags: ['hotel', 'booking', 'accommodation', 'travel', 'itinerary'])
-INFO:     Started server process [2993289]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
-WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
-INFO:hotel_agent.agent_executor:hotel_agent processing search query: 'Find 3 star hotels in Goa for 2 nights'
-INFO:hotel_agent.agent_executor:Created new ADK session: 32a15b34-c9e7-43f1-bee5-5965df5f1829 for hotel_agent
-INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
-INFO:google_genai.models:AFC is enabled with max remote calls: 10.
-INFO:google_adk.google.adk.models.google_llm:Response received from the model.
-INFO:hotel_agent.agent_executor:hotel_agent final response: 'MISSING_INFO: The check-in date, check-out date, and number of guests are required to search for a hotel.'
-INFO:hotel_agent.agent_executor:Sending hotel search response for task 32a15b34-c9e7-43f1-bee5-5965df5f1829
-ERROR:asyncio:Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x7f7e128bb230>
-ERROR:asyncio:Unclosed connector
-connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7f7e128cd9d0>, 8763196.836949311)])']
-connector: <aiohttp.connector.TCPConnector object at 0x7f7e128bae40>
+INFO:message_broker:MessageBroker initialized and connected to Redis at localhost:6379.
+INFO:firebase_state_service:Firebase initialized successfully with database: https://hack2skill-emt-default-rtdb.firebaseio.com/
+INFO:__main__:[hotel_agent] Initialized with Firebase state service
+INFO:__main__:[hotel_agent] is waiting for tasks on tasks:hotel_agent...
+INFO:message_broker:Atomically waiting for task from 'tasks:hotel_agent' to move to 'processing:hotel_agent'.

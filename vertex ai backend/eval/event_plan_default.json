@@ -4,6 +4,8 @@
       "name": "",
       "email": "",
       "phone_number": "",
+      "age": null,
+      "gender": "",
       "passport_nationality": "",
       "home_address": ""
     },
@@ -11,8 +13,7 @@
       {
         "name": "",
         "age": null,
-        "gender": "",
-        "relation_to_user": ""
+        "gender": ""
       }
     ],
     "preferences": {
@@ -23,6 +24,7 @@
       "hotel_type": "",
       "flight_seat_type": ""
     },
+    "itinerary_created":"false",
     "itinerary": {
       "trip_name": "",
       "origin": "",
@@ -63,6 +65,7 @@
       "to_currency": "",
       "exchange_rate": null,
       "last_updated": ""
-    }
+    },
+    "sync_user_profile": "false"
   }
 }

@@ -24,4 +24,4 @@ HOTEL_AGENT_A2A_URL: Final[str] = os.getenv("HOTEL_AGENT_A2A_URL", "http://127.0
 HOST_AGENT_A2A_URL: Final[str] = os.getenv("HOST_AGENT_A2A_URL", "http://127.0.0.1:8000")
 
 # ADK Configuration
-ADK_MODEL: Final[str] = os.getenv("ADK_MODEL", "gemini-2.0-flash")
+ADK_MODEL: Final[str] = os.getenv("ADK_MODEL", "gemini-2.5-flash")

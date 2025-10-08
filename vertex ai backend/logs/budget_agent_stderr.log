@@ -1,10 +1,5 @@
-INFO:budget_agent.agent_executor:Initializing BudgetADKAgentExecutor for agent: budget_agent
-INFO:budget_agent.agent_executor:ADK Runner accepted for app 'BUDGET_a2a_app' for agent 'budget_agent'
-INFO:__main__:Starting Budget Concierge Agent server on http://0.0.0.0:8006
-INFO:__main__:Agent Name: Budget Concierge Agent, Version: 1.0.0
-INFO:__main__:  Skill: Manage Budget (ID: budget_management, Tags: ['budget', 'expenses', 'finance', 'travel', 'itinerary'])
-INFO:     Started server process [2993285]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8006 (Press CTRL+C to quit)
-WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:message_broker:MessageBroker initialized and connected to Redis at localhost:6379.
+INFO:firebase_state_service:Firebase initialized successfully with database: https://hack2skill-emt-default-rtdb.firebaseio.com/
+INFO:__main__:[budget_agent] Initialized with Firebase state service
+INFO:__main__:[budget_agent] is waiting for tasks on tasks:budget_agent...
+INFO:message_broker:Atomically waiting for task from 'tasks:budget_agent' to move to 'processing:budget_agent'.

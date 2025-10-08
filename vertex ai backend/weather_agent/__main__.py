@@ -1,145 +1,148 @@
-"""Weather Concierge Agent A2A Service Entry Point."""
-
+import json
 import logging
+import asyncio
 import os
-
-import click
-import uvicorn
-
-# A2A server imports
-from a2a.server.apps import A2AStarletteApplication
-from a2a.server.request_handlers import DefaultRequestHandler
-from a2a.server.tasks import InMemoryTaskStore
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from dotenv import load_dotenv
-
-# ADK imports
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+import sys
+from message_broker import MessageBroker
+from message_protocol import Message, Header, ResultPayload
+from weather_agent.agent import agent
 from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
+from redis_session_service import RedisSessionService
+from firebase_state_service import FirebaseStateService
+from main_agent.memory import set_firebase_context
+from google.genai import types
 
-# Local agent imports (updated for weather_agent)
-from weather_agent.agent import create_weather_agent
-from weather_agent.agent_executor import WeatherADKAgentExecutor
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Basic logging configuration
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s:%(name)s:%(message)s',
+    stream=sys.stderr,
+    force=True
+)
 logger = logging.getLogger(__name__)
 
-# Define the application name as requested
-WEATHER_A2A_APP_NAME = "WEATHER_a2a_app"
+class WeatherAgentExecutor:
+    def __init__(self):
+        self.broker = MessageBroker()
+        self.agent_name = "weather_agent"
+        self.llm_agent = agent
 
+        # Redis session service for conversation history
+        self.session_service = RedisSessionService()
 
-@click.command()
-@click.option(
-    "--host",
-    "host",
-    default=os.getenv("A2A_WEATHER_HOST", "localhost"),
-    show_default=True,
-    help="Host for the Weather Concierge Agent server.",
-)
-@click.option(
-    "--port",
-    "port",
-    default=int(os.getenv("A2A_WEATHER_PORT", 8003)),
-    show_default=True,
-    type=int,
-    help="Port for the Weather Concierge Agent server.",
-)
-def main(host: str, port: int) -> None:
-    """Runs the Weather ADK Agent as an A2A service."""
+        # Firebase service for state management
+        cred_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'hack2skill-emt-firebase-adminsdk-fbsvc-b2ea50c49d.json'))
+        self.firebase_service = FirebaseStateService(cred_path=cred_path)
 
-    # Check for a required weather API key
-    if not os.getenv("WEATHER_API_KEY"):
-        logger.warning(
-            "WEATHER_API_KEY environment variable not set. "
-            "The agent might fail to fetch weather data."
+        # Use consistent app_name
+        self.app_name = "chat_app"
+
+        self.runner = Runner(
+            agent=self.llm_agent,
+            app_name=self.app_name,
+            session_service=self.session_service
         )
+        logger.info(f"[{self.agent_name}] Initialized with Firebase state service")
 
-    # Define AgentSkills for the Weather Concierge Agent 🌦️
-    current_weather_skill = AgentSkill(
-        id="get_current_weather",
-        name="Get Current Weather",
-        description="Provides the current temperature and weather conditions for a specified location.",
-        tags=["weather", "current", "temperature", "forecast", "conditions"],
-        examples=[
-            "What's the weather like in London right now?",
-            "How hot is it in Dubai?",
-            "Tell me the current weather in New York City",
-        ],
-    )
+    async def _invoke_llm_sync(self, user_request: str, session_id: str, user_id: str, itinerary_id: str) -> str:
+        """Invokes the agent's LLM synchronously using the Runner."""
+        logger.info(f"[{self.agent_name}] Invoking runner for user: {user_id}, session: {session_id}, itinerary: {itinerary_id}")
 
-    weather_forecast_skill = AgentSkill(
-        id="get_weather_forecast",
-        name="Get Weather Forecast",
-        description="Retrieves the weather forecast for the upcoming days for a given city.",
-        tags=["weather", "forecast", "planning", "outlook", "rain"],
-        examples=[
-            "What is the forecast for Paris this weekend?",
-            "Will it rain in Tokyo tomorrow?",
-            "Give me the 5-day forecast for Sydney",
-        ],
-    )
+        # Set Firebase context before invoking runner
+        set_firebase_context(self.firebase_service, user_id, itinerary_id)
+        logger.info(f"[{self.agent_name}] Firebase context set")
 
-    # Define the main AgentCard for the Weather Concierge
-    agent_card = AgentCard(
-        name="Weather Concierge Agent",
-        description="An agent that provides current weather conditions and future forecasts for any location.",
-        url=f"http://{host}:{port}/",
-        version="1.0.0",
-        defaultInputModes=["text"],
-        defaultOutputModes=["text"],
-        capabilities=AgentCapabilities(streaming=False, pushNotifications=False),
-        skills=[current_weather_skill, weather_forecast_skill],
-    )
+        content = types.Content(role='user', parts=[types.Part(text=user_request)])
+        final_response_text = ""
 
-    try:
-        # Create the actual ADK Agent for weather
-        adk_agent = create_weather_agent()
+        async for event in self.runner.run_async(user_id=user_id, session_id=session_id, new_message=content):
+            if event.content and event.content.parts:
+                for part in event.content.parts:
+                    if hasattr(part, 'text') and part.text:
+                        final_response_text += part.text
 
-        # Initialize the ADK Runner
-        runner = Runner(
-            app_name=WEATHER_A2A_APP_NAME,
-            agent=adk_agent,
-            artifact_service=InMemoryArtifactService(),
-            session_service=InMemorySessionService(),
-            memory_service=InMemoryMemoryService(),
-        )
+        logger.info(f"[{self.agent_name}] Final response length: {len(final_response_text)}")
+        return final_response_text
 
-        # Instantiate the AgentExecutor with the runner
-        agent_executor = WeatherADKAgentExecutor(
-            agent=adk_agent, agent_card=agent_card, runner=runner
-        )
+    def run(self):
+        main_queue = f"tasks:{self.agent_name}"
+        processing_queue = f"processing:{self.agent_name}"
+        dlq = f"dlq:{self.agent_name}"
+        max_retries = 3
 
-    except Exception as e:
-        logger.error(
-            f"Failed to initialize Weather Agent components: {e}", exc_info=True
-        )
-        return
+        logger.info(f"[{self.agent_name}] is waiting for tasks on {main_queue}...")
+        while True:
+            task_message_dict = self.broker.start_atomic_task(main_queue, processing_queue)
+            if not task_message_dict:
+                continue
 
-    # Set up the A2A request handler
-    request_handler = DefaultRequestHandler(
-        agent_executor=agent_executor, task_store=InMemoryTaskStore()
-    )
+            try:
+                task_message = Message.model_validate(task_message_dict)
+                correlation_id = task_message.header.correlation_id
+                logger.info(f"[{self.agent_name}] Received task: {task_message.payload.task_name} with Correlation ID: {correlation_id}")
 
-    # Create the A2A Starlette application
-    a2a_app = A2AStarletteApplication(
-        agent_card=agent_card, http_handler=request_handler
-    )
+                # Extract parameters including user_id and itinerary_id
+                params = task_message.payload.parameters
+                task_description = params.get("task_description", "")
+                user_id = params.get("user_id", "user")
+                itinerary_id = params.get("itinerary_id", "default")
+                session_id = params.get("session_id", correlation_id)
 
-    logger.info(f"Starting Weather Concierge Agent server on http://{host}:{port}")
-    logger.info(f"Agent Name: {agent_card.name}, Version: {agent_card.version}")
-    if agent_card.skills:
-        for skill in agent_card.skills:
-            logger.info(f"  Skill: {skill.name} (ID: {skill.id}, Tags: {skill.tags})")
+                logger.info(f"[{self.agent_name}] Processing for user={user_id}, itinerary={itinerary_id}")
+                logger.info(f"[{self.agent_name}] Task description: {task_description}")
 
-    # Run the Uvicorn server
-    uvicorn.run(a2a_app.build(), host=host, port=port)
+                # Invoke the LLM with Firebase context
+                llm_response_str = asyncio.run(
+                    self._invoke_llm_sync(task_description, session_id, user_id, itinerary_id)
+                )
+                logger.info(f"[{self.agent_name}] Raw LLM response: {llm_response_str[:200]}")
 
+                # Try to parse JSON response, fallback to plain text
+                try:
+                    # Strip markdown code fences if present
+                    cleaned_response = llm_response_str.strip()
+                    if cleaned_response.startswith('```json'):
+                        cleaned_response = cleaned_response[7:]  # Remove ```json
+                    elif cleaned_response.startswith('```'):
+                        cleaned_response = cleaned_response[3:]  # Remove ```
+                    if cleaned_response.endswith('```'):
+                        cleaned_response = cleaned_response[:-3]  # Remove trailing ```
+                    cleaned_response = cleaned_response.strip()
+
+                    llm_response_json = json.loads(cleaned_response)
+                    result_data = llm_response_json.get('results', llm_response_json)
+                except json.JSONDecodeError:
+                    logger.warning(f"[{self.agent_name}] Response not JSON, using as plain text")
+                    result_data = {"response": llm_response_str, "results": []}
+
+                result_header = Header(
+                    correlation_id=correlation_id,
+                    message_type="RESULT",
+                    source_agent=self.agent_name,
+                    target_agent=task_message.header.source_agent,
+                )
+                result_payload = ResultPayload(
+                    status="SUCCESS",
+                    data=result_data
+                )
+                result_message = Message(header=result_header, payload=result_payload)
+
+                reply_channel = task_message.header.reply_to_channel or "results:main"
+                self.broker.enqueue_task(reply_channel, result_message.model_dump())
+                logger.info(f"[{self.agent_name}] Sent result to {reply_channel}")
+
+                self.broker.finish_atomic_task(processing_queue, task_message_dict)
+
+            except Exception as e:
+                logger.error(f"[{self.agent_name}] Task failed: {e}", exc_info=True)
+                task_message_dict['retry_count'] = task_message_dict.get('retry_count', 0) + 1
+                if task_message_dict['retry_count'] >= max_retries:
+                    self.broker.move_to_dlq(processing_queue, dlq, task_message_dict)
+                    logger.error(f"[{self.agent_name}] Task moved to DLQ after {max_retries} retries")
+                else:
+                    self.broker.requeue_failed_task(processing_queue, main_queue, task_message_dict)
+                    logger.warning(f"[{self.agent_name}] Task requeued, retry {task_message_dict['retry_count']}/{max_retries}")
 
 if __name__ == "__main__":
-    main()
+    agent_executor = WeatherAgentExecutor()
+    agent_executor.run()

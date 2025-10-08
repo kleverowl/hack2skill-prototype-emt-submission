@@ -1,10 +1,5 @@
-INFO:document_agent.agent_executor:Initializing DocumentADKAgentExecutor for agent: document_agent
-INFO:document_agent.agent_executor:ADK Runner accepted for app 'DOCUMENT_a2a_app' for agent 'document_agent'
-INFO:__main__:Starting Document Concierge Agent server on http://0.0.0.0:8009
-INFO:__main__:Agent Name: Document Concierge Agent, Version: 1.0.0
-INFO:__main__:  Skill: Verify Document (ID: document_verification, Tags: ['document', 'verification', 'passport', 'visa', 'travel'])
-INFO:     Started server process [2993288]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8009 (Press CTRL+C to quit)
-WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:message_broker:MessageBroker initialized and connected to Redis at localhost:6379.
+INFO:firebase_state_service:Firebase initialized successfully with database: https://hack2skill-emt-default-rtdb.firebaseio.com/
+INFO:__main__:[document_agent] Initialized with Firebase state service
+INFO:__main__:[document_agent] is waiting for tasks on tasks:document_agent...
+INFO:message_broker:Atomically waiting for task from 'tasks:document_agent' to move to 'processing:document_agent'.

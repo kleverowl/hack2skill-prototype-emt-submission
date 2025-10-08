@@ -6,6 +6,8 @@ class UserDetails(BaseModel):
     name: str = ""
     email: str = ""
     phone_number: str = ""
+    age: Optional[int] = None
+    gender: str = ""
     passport_nationality: str = ""
     home_address: str = ""
 
@@ -25,6 +27,11 @@ class Preferences(BaseModel):
 
 class ScheduleItem(BaseModel):
     activity_type: str = ""
+    activity_object: Optional[str] = None
+    origin: str = ""
+    destination: Optional[str] = None
+    flight_number: Optional[str] = None
+    cab_number: Optional[str] = None
     start_time: str = ""
     end_time: str = ""
     description: str = ""
@@ -67,6 +74,9 @@ class ItineraryState(BaseModel):
     user_details: UserDetails = Field(default_factory=UserDetails)
     persons_details: List[PersonDetails] = []
     preferences: Preferences = Field(default_factory=Preferences)
+    itinerary_created: bool = False
     itinerary: Itinerary = Field(default_factory=Itinerary)
     budget: Budget = Field(default_factory=Budget)
     currency_exchange: CurrencyExchange = Field(default_factory=CurrencyExchange)
+    sync_user_profile: bool = False
+    specialist_results: Dict[str, Any] = Field(default_factory=dict)

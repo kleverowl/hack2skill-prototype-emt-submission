@@ -1,22 +1,5 @@
-INFO:cab_agent.agent_executor:Initializing CabADKAgentExecutor for agent: cab_agent
-INFO:cab_agent.agent_executor:ADK Runner accepted for app 'CAB_a2a_app' for agent 'cab_agent'
-INFO:__main__:Starting Cab Concierge Agent server on http://0.0.0.0:8007
-INFO:__main__:Agent Name: Cab Concierge Agent, Version: 1.0.0
-INFO:__main__:  Skill: Book a Cab (ID: cab_booking, Tags: ['cab', 'booking', 'transportation', 'travel', 'itinerary'])
-INFO:     Started server process [2993286]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8007 (Press CTRL+C to quit)
-WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
-INFO:cab_agent.agent_executor:cab_agent processing search query: 'Arrange cab services for local travel in Goa'
-INFO:cab_agent.agent_executor:Created new ADK session: 258ec784-a8cb-4443-8456-01819e2528da for cab_agent
-INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
-INFO:google_genai.models:AFC is enabled with max remote calls: 10.
-INFO:google_adk.google.adk.models.google_llm:Response received from the model.
-INFO:cab_agent.agent_executor:cab_agent final response: 'MISSING_INFO: The pickup and drop-off locations are required to book a cab.'
-INFO:cab_agent.agent_executor:Sending cab search response for task 258ec784-a8cb-4443-8456-01819e2528da
-ERROR:asyncio:Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x7ff37d97f230>
-ERROR:asyncio:Unclosed connector
-connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x7ff37d989d30>, 8763207.924808554)])']
-connector: <aiohttp.connector.TCPConnector object at 0x7ff37d97ee40>
+INFO:message_broker:MessageBroker initialized and connected to Redis at localhost:6379.
+INFO:firebase_state_service:Firebase initialized successfully with database: https://hack2skill-emt-default-rtdb.firebaseio.com/
+INFO:__main__:[cab_agent] Initialized with Firebase state service
+INFO:__main__:[cab_agent] is waiting for tasks on tasks:cab_agent...
+INFO:message_broker:Atomically waiting for task from 'tasks:cab_agent' to move to 'processing:cab_agent'.

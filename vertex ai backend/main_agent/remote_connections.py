@@ -1,6 +1,7 @@
 """Remote connections for A2A client communication following the architecture pattern."""
 
 import asyncio
+import json
 from typing import Any, Dict
 from uuid import uuid4
 
@@ -96,12 +97,21 @@ class RemoteConnections:
             # Try to extract immediate response first
             immediate_result = self._extract_immediate_response(success_response.result)
             if immediate_result:
-                return {"result": immediate_result}
+                try:
+                    return json.loads(immediate_result)
+                except (json.JSONDecodeError, TypeError):
+                    return {"result": immediate_result}
 
             # If no immediate response, try task-based polling
             task_id = self._extract_task_id(success_response.result)
             if task_id:
-                return await self._poll_task_completion(client, task_id)
+                poll_result = await self._poll_task_completion(client, task_id)
+                if "result" in poll_result:
+                    try:
+                        return json.loads(poll_result["result"])
+                    except (json.JSONDecodeError, TypeError):
+                        return poll_result
+                return poll_result
 
             return {
                 "error": "No immediate response content and could not extract taskId for polling"

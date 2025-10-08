@@ -1,11 +1,5 @@
-INFO:weather_agent.agent_executor:Initializing WeatherADKAgentExecutor for agent: weather_agent
-INFO:weather_agent.agent_executor:ADK Runner accepted for app 'WEATHER_a2a_app' for agent 'weather_agent'
-INFO:__main__:Starting Weather Concierge Agent server on http://0.0.0.0:8004
-INFO:__main__:Agent Name: Weather Concierge Agent, Version: 1.0.0
-INFO:__main__:  Skill: Get Current Weather (ID: get_current_weather, Tags: ['weather', 'current', 'temperature', 'forecast', 'conditions'])
-INFO:__main__:  Skill: Get Weather Forecast (ID: get_weather_forecast, Tags: ['weather', 'forecast', 'planning', 'outlook', 'rain'])
-INFO:     Started server process [2993282]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8004 (Press CTRL+C to quit)
-WARNING:a2a.server.apps.jsonrpc.jsonrpc_app:Deprecated agent card endpoint '/.well-known/agent.json' accessed. Please use '/.well-known/agent-card.json' instead. This endpoint will be removed in a future version.
+INFO:message_broker:MessageBroker initialized and connected to Redis at localhost:6379.
+INFO:firebase_state_service:Firebase initialized successfully with database: https://hack2skill-emt-default-rtdb.firebaseio.com/
+INFO:__main__:[weather_agent] Initialized with Firebase state service
+INFO:__main__:[weather_agent] is waiting for tasks on tasks:weather_agent...
+INFO:message_broker:Atomically waiting for task from 'tasks:weather_agent' to move to 'processing:weather_agent'.
